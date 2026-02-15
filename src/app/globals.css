@@ -3,26 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --secure-dark: #0a0f1a;
-  --secure-card: #111827;
-  --secure-accent: #10b981;
-  --secure-warning: #f59e0b;
-  --secure-danger: #ef4444;
+  --bg-page: #ffffff;
+  --bg-card: #f7f7f8;
+  --text-primary: #0d0d0d;
+  --text-secondary: #6e6e80;
+  --border: #e5e5e5;
 }
 
-* {
-  box-sizing: border-box;
+/* Force light theme - override any dark mode */
+html {
+  background: #ffffff !important;
+  color-scheme: light;
 }
 
-/* Override Next.js FOUC hide - prevents blank page when JS fails */
+/* Override Next.js FOUC hide + force light theme */
 html, body {
-  margin: 0;
-  padding: 0;
-  background: #0a0f1a !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+  color: #0d0d0d !important;
   min-height: 100vh;
-  color: #e5e7eb;
-  font-family: system-ui, -apple-system, sans-serif;
-  display: block !important; /* Don't hide body when JS errors */
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  display: block !important;
+  -webkit-font-smoothing: antialiased;
 }
 
 @keyframes pulse {

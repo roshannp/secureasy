@@ -40,11 +40,11 @@ const HEADER_LABELS: Record<
 export function SecurityHeadersCard({ host, headers }: SecurityHeadersCardProps) {
   if (!headers) {
     return (
-      <div className="rounded-lg border border-gray-700/50 bg-gray-800/30 p-4">
-        <h3 className="font-mono text-sm font-medium text-gray-400">
+      <div className="rounded-lg border p-4" style={{ borderColor: "#e5e5e5", background: "#f7f7f8" }}>
+        <h3 className="font-mono text-sm font-medium" style={{ color: "#6e6e80" }}>
           {host}
         </h3>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm" style={{ color: "#6e6e80" }}>
           Could not fetch headers (host may be unreachable or blocks requests)
         </p>
       </div>
@@ -52,12 +52,12 @@ export function SecurityHeadersCard({ host, headers }: SecurityHeadersCardProps)
   }
 
   return (
-    <div className="rounded-lg border border-gray-700/50 bg-gray-800/30 p-4">
+    <div className="rounded-lg border p-4" style={{ borderColor: "#e5e5e5", background: "#f7f7f8" }}>
       <div className="flex items-center justify-between">
-        <h3 className="font-mono text-sm font-medium text-emerald-300">
+        <h3 className="font-mono text-sm font-medium" style={{ color: "#0d0d0d" }}>
           {host}
         </h3>
-        <span className="rounded bg-gray-700 px-2 py-0.5 text-xs text-gray-300">
+        <span className="rounded px-2 py-0.5 text-xs" style={{ background: "#e5e5e5", color: "#0d0d0d" }}>
           {headers.score}/100
         </span>
       </div>
@@ -73,15 +73,14 @@ export function SecurityHeadersCard({ host, headers }: SecurityHeadersCardProps)
                   className="flex items-start gap-2 text-xs"
                 >
                   <span
-                    className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${
-                      item.present ? "bg-emerald-500" : "bg-red-500"
-                    }`}
+                    className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
+                    style={{ background: item.present ? "#166534" : "#b91c1c" }}
                   />
                   <div>
-                    <span className="text-gray-300">{label}</span>
-                    <span className="text-gray-500"> — {desc}</span>
+                    <span style={{ color: "#0d0d0d" }}>{label}</span>
+                    <span style={{ color: "#6e6e80" }}> — {desc}</span>
                     {item.present && item.value && (
-                      <p className="mt-0.5 truncate font-mono text-gray-500">
+                      <p className="mt-0.5 truncate font-mono" style={{ color: "#6e6e80" }}>
                         {item.value}
                       </p>
                     )}

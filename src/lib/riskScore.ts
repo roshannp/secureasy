@@ -25,6 +25,7 @@ export interface ActionItem {
   description: string;
   fix: string;
   count?: number;
+  priorityScore: number; // 1-100, higher = fix first
 }
 
 export function calculateRiskScore(
@@ -62,6 +63,7 @@ export function calculateRiskScore(
       description: `${expiredCerts.length} subdomain(s) have expired certificates.`,
       fix: "Renew SSL certificates immediately. Attackers can exploit expired certs for MITM attacks.",
       count: expiredCerts.length,
+      priorityScore: 95 + Math.min(expiredCerts.length, 4), // 95-99
     });
   }
 
@@ -74,6 +76,7 @@ export function calculateRiskScore(
       description: `${devExposed.length} dev/staging subdomain(s) are publicly discoverable.`,
       fix: "Restrict access with firewall rules, VPN, or remove from public DNS. Dev environments often have weaker security.",
       count: devExposed.length,
+      priorityScore: 85 + Math.min(devExposed.length, 5),
     });
   }
 
@@ -81,6 +84,7 @@ export function calculateRiskScore(
     (rootHeaders && !rootHeaders.hsts.present ? 1 : 0) + noHsts.length;
   if (mainNoHsts > 0) {
     score -= Math.min(25, 15 + mainNoHsts * 2);
+    const rootAffected = rootHeaders && !rootHeaders.hsts.present ? 1 : 0;
     actions.push({
       id: "no-hsts",
       severity: "high",
@@ -88,6 +92,7 @@ export function calculateRiskScore(
       description: "Strict-Transport-Security header is not set on one or more hosts.",
       fix: "Add Strict-Transport-Security: max-age=31536000; includeSubDomains; preload to force HTTPS.",
       count: mainNoHsts,
+      priorityScore: 75 + rootAffected * 10 + Math.min(mainNoHsts, 5), // root = +10
     });
   }
 
@@ -102,6 +107,7 @@ export function calculateRiskScore(
       description: "CSP header helps prevent XSS and injection attacks.",
       fix: "Add a Content-Security-Policy header. Start with default-src 'self' and refine as needed.",
       count: mainNoCsp,
+      priorityScore: 55 + Math.min(mainNoCsp * 2, 15),
     });
   }
 
@@ -116,6 +122,7 @@ export function calculateRiskScore(
       description: "Clickjacking protection is not configured.",
       fix: 'Add X-Frame-Options: DENY or SAMEORIGIN to prevent your site from being embedded in iframes.',
       count: mainNoXfo,
+      priorityScore: 45 + Math.min(mainNoXfo * 2, 10),
     });
   }
 
@@ -127,6 +134,7 @@ export function calculateRiskScore(
       title: "Large attack surface",
       description: `${list.length} subdomains increases monitoring effort.`,
       fix: "Audit and decommission unused subdomains. Consolidate services where possible.",
+      priorityScore: 20,
     });
   }
 
@@ -138,8 +146,12 @@ export function calculateRiskScore(
       description: "Some subdomains may not support HTTPS.",
       fix: "Enable TLS for all public-facing subdomains.",
       count: noCert.length,
+      priorityScore: 80 + Math.min(noCert.length, 5),
     });
   }
+
+  // Sort by priority (highest first) and assign rank
+  actions.sort((a, b) => b.priorityScore - a.priorityScore);
 
   score = Math.max(0, Math.min(100, score));
 

@@ -8,16 +8,16 @@ export default function Home() {
         padding: "3rem 1rem",
         maxWidth: "896px",
         margin: "0 auto",
-        background: "#0a0f1a",
-        color: "#e5e7eb",
+        background: "#ffffff",
+        color: "#0d0d0d",
       }}
     >
       <header style={{ textAlign: "center", marginBottom: "2rem" }}>
-        <h1 style={{ color: "#ffffff", fontSize: "2rem", margin: 0 }}>
-          Secureasy
+        <h1 style={{ color: "#0d0d0d", fontSize: "2rem", margin: 0, fontWeight: 600 }}>
+          AM I SECURE
         </h1>
-        <p style={{ color: "#9ca3af", marginTop: "0.5rem" }}>
-          Attack surface visibility for small businesses
+        <p style={{ color: "#6e6e80", marginTop: "0.5rem" }}>
+          Domain security checker
         </p>
       </header>
 

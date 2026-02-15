@@ -1,4 +1,4 @@
-# Secureasy
+# AM I SECURE
 
 **Attack surface visibility for small businesses.** See what attackers can see.
 

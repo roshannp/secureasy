@@ -229,7 +229,7 @@ export async function GET(request: NextRequest) {
         redirect: "follow",
         headers: {
           "User-Agent":
-            "Secureasy-Scanner/1.0 (Security audit; https://secureasy.io)",
+            "AmISecure-Scanner/1.0 (Security audit)",
         },
         signal: AbortSignal.timeout(8000),
       });
@@ -263,7 +263,7 @@ export async function GET(request: NextRequest) {
             redirect: "follow",
             headers: {
               "User-Agent":
-                "Secureasy-Scanner/1.0 (Security audit; https://secureasy.io)",
+                "AmISecure-Scanner/1.0 (Security audit)",
             },
             signal: AbortSignal.timeout(4000),
           });

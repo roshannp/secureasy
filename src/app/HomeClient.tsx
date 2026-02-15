@@ -90,9 +90,9 @@ export function HomeClient() {
               flex: 1,
               padding: "0.75rem 1rem",
               borderRadius: "8px",
-              border: "1px solid #4b5563",
-              background: "rgba(17, 24, 39, 0.5)",
-              color: "#ffffff",
+              border: "1px solid #e5e5e5",
+              background: "#ffffff",
+              color: "#0d0d0d",
               fontSize: "1rem",
             }}
           />
@@ -102,8 +102,8 @@ export function HomeClient() {
             style={{
               padding: "0.75rem 1.5rem",
               borderRadius: "8px",
-              background: "#059669",
-              color: "white",
+              background: "#000000",
+              color: "#ffffff",
               fontWeight: 500,
               border: "none",
               cursor: isScanning ? "not-allowed" : "pointer",
@@ -120,9 +120,9 @@ export function HomeClient() {
           style={{
             marginBottom: "1.5rem",
             padding: "1rem",
-            background: "rgba(31, 41, 55, 0.8)",
+            background: "#f7f7f8",
             borderRadius: "12px",
-            border: "1px solid #374151",
+            border: "1px solid #e5e5e5",
           }}
         >
           <div
@@ -133,17 +133,17 @@ export function HomeClient() {
               marginBottom: "0.5rem",
             }}
           >
-            <span style={{ fontSize: "1rem", fontWeight: 600, color: "#10b981" }}>
+            <span style={{ fontSize: "1rem", fontWeight: 600, color: "#0d0d0d" }}>
               {Math.round(scanProgress)}%
             </span>
-            <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
+            <span style={{ fontSize: "0.8rem", color: "#6e6e80" }}>
               Scanning...
             </span>
           </div>
           <div
             style={{
               height: "12px",
-              background: "#111827",
+              background: "#e5e5e5",
               borderRadius: "6px",
               overflow: "hidden",
             }}
@@ -152,16 +152,16 @@ export function HomeClient() {
               style={{
                 height: "100%",
                 width: `${scanProgress}%`,
-                background: "linear-gradient(90deg, #059669, #10b981)",
+                background: "#0d0d0d",
                 borderRadius: "6px",
                 transition: "width 0.15s ease-out",
               }}
             />
           </div>
-          <p style={{ fontSize: "0.75rem", color: "#6b7280", margin: "0.5rem 0 0 0" }}>
+          <p style={{ fontSize: "0.75rem", color: "#6e6e80", margin: "0.5rem 0 0 0" }}>
             Discovering subdomains → checking DNS → security headers...
           </p>
-          <p style={{ fontSize: "0.7rem", color: "#4b5563", margin: "0.25rem 0 0 0" }}>
+          <p style={{ fontSize: "0.7rem", color: "#6e6e80", margin: "0.25rem 0 0 0", opacity: 0.8 }}>
             Large domains may take 30+ seconds. If nothing appears, check the browser console for errors.
           </p>
         </div>
@@ -169,7 +169,7 @@ export function HomeClient() {
 
       {history.length > 0 && !result && !isScanning && (
         <div style={{ marginBottom: "1.5rem" }}>
-          <p style={{ fontSize: "0.875rem", color: "#9ca3af", marginBottom: "0.5rem" }}>
+          <p style={{ fontSize: "0.875rem", color: "#6e6e80", marginBottom: "0.5rem" }}>
             Recent scans
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
@@ -180,9 +180,9 @@ export function HomeClient() {
                 style={{
                   padding: "0.375rem 0.75rem",
                   borderRadius: "8px",
-                  border: "1px solid #4b5563",
-                  background: "rgba(31, 41, 55, 0.5)",
-                  color: "#d1d5db",
+                  border: "1px solid #e5e5e5",
+                  background: "#f7f7f8",
+                  color: "#0d0d0d",
                   cursor: "pointer",
                   fontSize: "0.875rem",
                 }}
@@ -199,9 +199,9 @@ export function HomeClient() {
           style={{
             padding: "0.75rem 1rem",
             borderRadius: "8px",
-            border: "1px solid rgba(239, 68, 68, 0.5)",
-            background: "rgba(239, 68, 68, 0.1)",
-            color: "#f87171",
+            border: "1px solid #b91c1c",
+            background: "rgba(185, 28, 28, 0.08)",
+            color: "#b91c1c",
             marginBottom: "1.5rem",
           }}
         >
@@ -215,7 +215,7 @@ export function HomeClient() {
             style={{
               fontSize: "1.25rem",
               fontWeight: 600,
-              color: "#ffffff",
+              color: "#0d0d0d",
               marginBottom: "1rem",
             }}
           >

@@ -5,7 +5,7 @@ export interface StoredScan {
   subdomainCount: number;
 }
 
-const STORAGE_KEY = "secureasy_scan_history";
+const STORAGE_KEY = "am_i_secure_scan_history";
 const MAX_ENTRIES = 10;
 
 export function getScanHistory(): StoredScan[] {

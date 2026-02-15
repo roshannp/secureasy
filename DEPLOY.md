@@ -1,4 +1,4 @@
-# Deploy Secureasy to GitHub + Vercel
+# Deploy AM I SECURE to GitHub + Vercel
 
 ## Step 1: Create GitHub repository
 
