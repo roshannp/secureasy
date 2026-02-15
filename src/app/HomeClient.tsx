@@ -6,6 +6,17 @@ import { ScanResult } from "@/components/ScanResult";
 const RESULT_SECTION_ID = "scan-results";
 import { getScanHistory } from "@/lib/scanHistory";
 import { getApiBase } from "@/lib/api";
+
+async function checkApiReachable(): Promise<boolean> {
+  const base = getApiBase();
+  if (!base) return false;
+  try {
+    const res = await fetch(`${base}/api/health`, { method: "GET" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
 import type { StoredScan } from "@/lib/scanHistory";
 import type { ScanResultData } from "@/types";
 
@@ -16,8 +27,17 @@ export function HomeClient() {
   const [result, setResult] = useState<ScanResultData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<StoredScan[]>([]);
+  const [apiReachable, setApiReachable] = useState<boolean | null>(null);
   const scanStartRef = useRef<number>(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (getApiBase()) {
+      checkApiReachable().then(setApiReachable);
+    } else {
+      setApiReachable(false);
+    }
+  }, []);
 
   useEffect(() => {
     setHistory(getScanHistory());
@@ -102,6 +122,23 @@ export function HomeClient() {
 
   return (
     <>
+      {apiReachable === false && (
+        <div
+          style={{
+            marginBottom: "1rem",
+            padding: "0.75rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #92400e",
+            background: "rgba(146, 64, 14, 0.08)",
+            color: "#92400e",
+            fontSize: "0.875rem",
+          }}
+        >
+          {getApiBase()
+            ? "API unreachable — check API_BASE secret or try again later."
+            : "API not configured — set API_BASE secret in repo Settings → Secrets."}
+        </div>
+      )}
       <form onSubmit={handleScan} style={{ marginBottom: "1.5rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           <input
