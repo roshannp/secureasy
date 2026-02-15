@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ScanResult } from "@/components/ScanResult";
 import { getScanHistory } from "@/lib/scanHistory";
 import type { StoredScan } from "@/lib/scanHistory";
@@ -9,13 +9,39 @@ import type { ScanResultData } from "@/types";
 export function HomeClient() {
   const [domain, setDomain] = useState("");
   const [isScanning, setIsScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState(0);
   const [result, setResult] = useState<ScanResultData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<StoredScan[]>([]);
+  const scanStartRef = useRef<number>(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     setHistory(getScanHistory());
   }, [result]);
+
+  useEffect(() => {
+    if (isScanning) {
+      setScanProgress(0);
+      scanStartRef.current = Date.now();
+
+      intervalRef.current = setInterval(() => {
+        const elapsed = (Date.now() - scanStartRef.current) / 1000;
+        // Slow curve: ~95% at 30s, never quite reaches 100
+        const p = 95 * (1 - Math.exp(-elapsed / 12));
+        setScanProgress(Math.min(95, p));
+      }, 100);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      setScanProgress(0);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isScanning]);
 
   const handleScan = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +58,12 @@ export function HomeClient() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
-      setIsScanning(false);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      setScanProgress(100);
+      setTimeout(() => setIsScanning(false), 250);
     }
   };
 
@@ -75,7 +106,34 @@ export function HomeClient() {
         </div>
       </form>
 
-      {history.length > 0 && !result && (
+      {isScanning && (
+        <div style={{ marginBottom: "1.5rem" }}>
+          <div
+            style={{
+              height: "8px",
+              background: "#1f2937",
+              borderRadius: "4px",
+              overflow: "hidden",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${scanProgress}%`,
+                background: "linear-gradient(90deg, #059669, #10b981)",
+                borderRadius: "4px",
+                transition: "width 0.15s ease-out",
+              }}
+            />
+          </div>
+          <p style={{ fontSize: "0.75rem", color: "#6b7280", margin: 0 }}>
+            {Math.round(scanProgress)}% — discovering subdomains, checking DNS & security headers...
+          </p>
+        </div>
+      )}
+
+      {history.length > 0 && !result && !isScanning && (
         <div style={{ marginBottom: "1.5rem" }}>
           <p style={{ fontSize: "0.875rem", color: "#9ca3af", marginBottom: "0.5rem" }}>
             Recent scans
