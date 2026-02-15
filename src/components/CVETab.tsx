@@ -35,7 +35,14 @@ export function CVETab({ technologies }: CVETabProps) {
     }
 
     setLoading(true);
-    fetch(`${getApiBase()}/api/cve?tech=${encodeURIComponent(techKey)}`)
+    fetch(
+        (() => {
+          const base = getApiBase();
+          return base
+            ? `${base}/api/cve?tech=${encodeURIComponent(techKey)}`
+            : `/api/cve?tech=${encodeURIComponent(techKey)}`;
+        })()
+      )
       .then((res) => res.json())
       .then((data) => {
         setResults(data.results || []);

@@ -54,10 +54,19 @@ export function HomeClient() {
     setResult(null);
     try {
       const cleaned = domain.trim().replace(/^https?:\/\//, "").split("/")[0];
-      const res = await fetch(`${getApiBase()}/api/scan?domain=${encodeURIComponent(cleaned)}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Scan failed");
-      setResult(data);
+      const apiBase = getApiBase();
+      const url = apiBase
+        ? `${apiBase}/api/scan?domain=${encodeURIComponent(cleaned)}`
+        : `/api/scan?domain=${encodeURIComponent(cleaned)}`;
+      const res = await fetch(url);
+      let data: unknown;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Invalid response from server");
+      }
+      if (!res.ok) throw new Error((data as { error?: string })?.error || "Scan failed");
+      setResult(data as ScanResultData);
       // Scroll to results when they appear
       setTimeout(() => {
         document.getElementById(RESULT_SECTION_ID)?.scrollIntoView({
@@ -67,6 +76,7 @@ export function HomeClient() {
       }, 300);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      console.error("Scan error:", err);
     } finally {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
