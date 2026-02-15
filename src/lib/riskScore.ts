@@ -31,26 +31,27 @@ export function calculateRiskScore(
   subdomains: SubdomainInfo[],
   rootHeaders?: SecurityHeadersResult
 ): { score: number; grade: string; actions: ActionItem[] } {
+  const list = Array.isArray(subdomains) ? subdomains : [];
   let score = 100;
   const actions: ActionItem[] = [];
 
-  const expiredCerts = subdomains.filter((s) => s.hasCert && !s.certValid);
-  const devExposed = subdomains.filter(
+  const expiredCerts = list.filter((s) => s.hasCert && !s.certValid);
+  const devExposed = list.filter(
     (s) =>
       s.name.startsWith("dev") ||
       s.name.startsWith("staging") ||
       s.name.startsWith("test")
   );
-  const noHsts = subdomains.filter(
+  const noHsts = list.filter(
     (s) => s.securityHeaders && !s.securityHeaders.hsts.present
   );
-  const noCsp = subdomains.filter(
+  const noCsp = list.filter(
     (s) => s.securityHeaders && !s.securityHeaders.csp.present
   );
-  const noXfo = subdomains.filter(
+  const noXfo = list.filter(
     (s) => s.securityHeaders && !s.securityHeaders.xFrameOptions.present
   );
-  const noCert = subdomains.filter((s) => !s.hasCert && s.ips.length > 0);
+  const noCert = list.filter((s) => !s.hasCert && s.ips.length > 0);
 
   if (expiredCerts.length > 0) {
     score -= Math.min(30, expiredCerts.length * 10);
@@ -118,13 +119,13 @@ export function calculateRiskScore(
     });
   }
 
-  if (subdomains.length > 50) {
+  if (list.length > 50) {
     score -= 10;
     actions.push({
       id: "large-surface",
       severity: "low",
       title: "Large attack surface",
-      description: `${subdomains.length} subdomains increases monitoring effort.`,
+      description: `${list.length} subdomains increases monitoring effort.`,
       fix: "Audit and decommission unused subdomains. Consolidate services where possible.",
     });
   }

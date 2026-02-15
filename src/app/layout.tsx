@@ -13,8 +13,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="font-sans antialiased">
+    <html lang="en" className="dark" style={{ background: "#0a0f1a" }}>
+      <body
+        className="font-sans antialiased"
+        style={{
+          background: "linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%)",
+          minHeight: "100vh",
+          color: "#e5e7eb",
+        }}
+      >
         {children}
       </body>
     </html>

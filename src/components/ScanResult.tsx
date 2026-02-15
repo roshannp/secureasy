@@ -3,29 +3,37 @@
 import type { ScanResultData } from "@/app/page";
 import { calculateRiskScore } from "@/lib/riskScore";
 import { saveScan, getPreviousScan, compareScans } from "@/lib/scanHistory";
+import type { ScanDiff } from "@/lib/scanHistory";
 import { generateHtmlReport } from "@/lib/exportReport";
 import { RiskGauge } from "./RiskGauge";
 import { ActionItems } from "./ActionItems";
 import { SecurityHeadersCard } from "./SecurityHeadersCard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ScanResultProps {
   data: ScanResultData;
 }
 
 export function ScanResult({ data }: ScanResultProps) {
-  const { domain, subdomains, dns, scanTime, rootSecurityHeaders } = data;
+  const {
+    domain,
+    subdomains = [],
+    dns = { a: [], aaaa: [], mx: [], txt: [], cname: [] },
+    scanTime = 0,
+    rootSecurityHeaders,
+  } = data;
   const { score, grade, actions } = calculateRiskScore(
     subdomains,
     rootSecurityHeaders
   );
 
-  const prevScan = getPreviousScan(domain);
-  const diff = prevScan
-    ? compareScans(prevScan, subdomains.map((s) => s.name))
-    : null;
+  const [diff, setDiff] = useState<ScanDiff | null>(null);
 
   useEffect(() => {
+    const prevScan = getPreviousScan(domain);
+    if (prevScan) {
+      setDiff(compareScans(prevScan, subdomains.map((s) => s.name)));
+    }
     saveScan({
       domain,
       scannedAt: data.scannedAt || new Date().toISOString(),
