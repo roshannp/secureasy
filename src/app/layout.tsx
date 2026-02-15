@@ -15,11 +15,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" style={{ background: "#0a0f1a" }}>
       <body
-        className="font-sans antialiased"
         style={{
-          background: "linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%)",
-          minHeight: "100vh",
+          margin: 0,
+          padding: 0,
+          background: "#0a0f1a",
           color: "#e5e7eb",
+          fontFamily: "system-ui, sans-serif",
         }}
       >
         {children}

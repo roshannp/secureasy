@@ -48,81 +48,131 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen px-4 py-12 md:py-20">
-      <div className="mx-auto max-w-4xl">
-        {/* Header */}
-        <header className="mb-12 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-            Secureasy
-          </h1>
-          <p className="mt-2 text-lg text-gray-400">
-            Attack surface visibility for small businesses
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "3rem 1rem",
+        maxWidth: "896px",
+        margin: "0 auto",
+      }}
+    >
+      {/* Header - inline styles for guaranteed visibility */}
+      <header style={{ textAlign: "center", marginBottom: "2rem" }}>
+        <h1
+          style={{
+            fontSize: "2.25rem",
+            fontWeight: 700,
+            color: "#ffffff",
+            margin: 0,
+          }}
+        >
+          Secureasy
+        </h1>
+        <p style={{ marginTop: "0.5rem", fontSize: "1.125rem", color: "#9ca3af" }}>
+          Attack surface visibility for small businesses
+        </p>
+      </header>
+
+      {/* Search form */}
+      <form onSubmit={handleScan} style={{ marginBottom: "1.5rem" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <input
+            type="text"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            placeholder="Enter domain (e.g. example.com)"
+            disabled={isScanning}
+            style={{
+              flex: 1,
+              padding: "0.75rem 1rem",
+              borderRadius: "8px",
+              border: "1px solid #4b5563",
+              background: "rgba(17, 24, 39, 0.5)",
+              color: "#ffffff",
+              fontSize: "1rem",
+            }}
+          />
+          <button
+            type="submit"
+            disabled={isScanning}
+            style={{
+              padding: "0.75rem 1.5rem",
+              borderRadius: "8px",
+              background: "#059669",
+              color: "white",
+              fontWeight: 500,
+              border: "none",
+              cursor: isScanning ? "not-allowed" : "pointer",
+              opacity: isScanning ? 0.6 : 1,
+            }}
+          >
+            {isScanning ? "Scanning..." : "Scan"}
+          </button>
+        </div>
+      </form>
+
+      {isScanning && (
+        <div
+          style={{
+            height: "4px",
+            background: "rgba(5, 150, 105, 0.5)",
+            borderRadius: "4px",
+            marginBottom: "1.5rem",
+            animation: "pulse 1.5s ease-in-out infinite",
+          }}
+        />
+      )}
+
+      {history.length > 0 && !result && (
+        <div style={{ marginBottom: "1.5rem" }}>
+          <p style={{ fontSize: "0.875rem", color: "#9ca3af", marginBottom: "0.5rem" }}>
+            Recent scans
           </p>
-        </header>
-
-        {/* Search */}
-        <form onSubmit={handleScan} className="mb-6">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <input
-              type="text"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              placeholder="Enter domain (e.g. example.com)"
-              className="flex-1 rounded-lg border border-gray-600 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              disabled={isScanning}
-            />
-            <button
-              type="submit"
-              disabled={isScanning}
-              className="rounded-lg bg-emerald-600 px-6 py-3 font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isScanning ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Scanning...
-                </span>
-              ) : (
-                "Scan"
-              )}
-            </button>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+            {history.slice(0, 5).map((h) => (
+              <button
+                key={`${h.domain}-${h.scannedAt}`}
+                onClick={() => handleHistoryClick(h.domain)}
+                style={{
+                  padding: "0.375rem 0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #4b5563",
+                  background: "rgba(31, 41, 55, 0.5)",
+                  color: "#d1d5db",
+                  cursor: "pointer",
+                  fontSize: "0.875rem",
+                }}
+              >
+                {h.domain}
+              </button>
+            ))}
           </div>
-        </form>
+        </div>
+      )}
 
-        {/* Progress bar when scanning */}
-        {isScanning && (
-          <div className="mb-6 overflow-hidden rounded-full bg-gray-800">
-            <div className="h-1 w-full animate-pulse bg-emerald-500/50" />
-          </div>
-        )}
+      {error && (
+        <div
+          style={{
+            padding: "0.75rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid rgba(239, 68, 68, 0.5)",
+            background: "rgba(239, 68, 68, 0.1)",
+            color: "#f87171",
+            marginBottom: "1.5rem",
+          }}
+        >
+          {error}
+        </div>
+      )}
 
-        {/* Scan history */}
-        {history.length > 0 && !result && (
-          <div className="mb-6">
-            <p className="mb-2 text-sm text-gray-400">Recent scans</p>
-            <div className="flex flex-wrap gap-2">
-              {history.slice(0, 5).map((h) => (
-                <button
-                  key={`${h.domain}-${h.scannedAt}`}
-                  onClick={() => handleHistoryClick(h.domain)}
-                  className="rounded-lg border border-gray-600 bg-gray-800/50 px-3 py-1.5 text-sm text-gray-300 transition hover:border-emerald-500/50 hover:bg-gray-800 hover:text-emerald-400"
-                >
-                  {h.domain}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-red-400">
-            {error}
-          </div>
-        )}
-
-        {/* Results */}
-        {result && <ScanResult data={result} />}
-      </div>
+      {result && <ScanResult data={result} />}
     </main>
   );
 }
