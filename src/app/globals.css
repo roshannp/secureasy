@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --secure-dark: #0a0f1a;
+  --secure-card: #111827;
+  --secure-accent: #10b981;
+  --secure-warning: #f59e0b;
+  --secure-danger: #ef4444;
+}
+
+body {
+  background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%);
+  min-height: 100vh;
+  color: #e5e7eb;
+}
