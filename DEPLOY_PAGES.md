@@ -20,9 +20,8 @@ In **roshannp/secureasy** → Settings → Secrets and variables → Actions:
 ## 3. Enable GitHub Pages
 
 In **roshannp/secureasy** → Settings → Pages:
-- Source: **Deploy from a branch**
-- Branch: **gh-pages** → **/ (root)**
+- Source: **GitHub Actions**
 
 ## 4. Push to trigger deploy
 
-Push to `main` — the workflow builds the static site and deploys to the `gh-pages` branch. The site will be live at **https://roshannp.github.io/secureasy** within a few minutes.
+Push to `main` — the workflow builds the static site and deploys via the official GitHub Pages deployment. The site will be live at **https://roshannp.github.io/secureasy** within a few minutes.
