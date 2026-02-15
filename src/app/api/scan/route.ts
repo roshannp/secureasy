@@ -238,9 +238,15 @@ export async function GET(request: NextRequest) {
       // ignore
     }
 
-    const toEnrich = subdomainNames.slice(0, 8);
-    const subdomains: SubdomainInfo[] = await Promise.all(
-      toEnrich.map(async (name) => {
+    const FULL_ENRICH = 15; // DNS + cert + HTTP headers + tech
+    const BASIC_ENRICH = 30; // DNS + cert only (no HTTP)
+
+    const enrichFull = subdomainNames.slice(0, FULL_ENRICH);
+    const enrichBasic = subdomainNames.slice(FULL_ENRICH, BASIC_ENRICH);
+    const rest = subdomainNames.slice(BASIC_ENRICH);
+
+    const fullEnriched: SubdomainInfo[] = await Promise.all(
+      enrichFull.map(async (name) => {
         const [ips, certInfo] = await Promise.all([
           Promise.all([
             dnsPromises.resolve4(name).catch(() => [] as string[]),
@@ -251,7 +257,6 @@ export async function GET(request: NextRequest) {
 
         let securityHeaders: SecurityHeadersResult | undefined;
         let technologies: string[] | undefined;
-
         try {
           const res = await fetch(`https://${name}`, {
             method: "HEAD",
@@ -260,12 +265,12 @@ export async function GET(request: NextRequest) {
               "User-Agent":
                 "Secureasy-Scanner/1.0 (Security audit; https://secureasy.io)",
             },
-            signal: AbortSignal.timeout(5000),
+            signal: AbortSignal.timeout(4000),
           });
           securityHeaders = parseSecurityHeaders(res.headers);
           technologies = detectTechnologies(res.headers);
         } catch {
-          // skip headers/tech for unreachable hosts
+          // skip
         }
 
         return {
@@ -280,14 +285,35 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    for (let i = 8; i < subdomainNames.length; i++) {
-      subdomains.push({
-        name: subdomainNames[i],
-        ips: [],
+    const basicEnriched: SubdomainInfo[] = await Promise.all(
+      enrichBasic.map(async (name) => {
+        const [ips, certInfo] = await Promise.all([
+          Promise.all([
+            dnsPromises.resolve4(name).catch(() => [] as string[]),
+            dnsPromises.resolve6(name).catch(() => [] as string[]),
+          ]).then(([v4, v6]) => [...v4, ...v6]),
+          getCertInfo(name),
+        ]);
+        return {
+          name,
+          ips,
+          hasCert: certInfo.hasCert,
+          certExpiry: certInfo.expiry,
+          certValid: certInfo.valid,
+        };
+      })
+    );
+
+    const subdomains: SubdomainInfo[] = [
+      ...fullEnriched,
+      ...basicEnriched,
+      ...rest.map((name) => ({
+        name,
+        ips: [] as string[],
         hasCert: false,
         certValid: false,
-      });
-    }
+      })),
+    ];
 
     const scanTime = Date.now() - start;
 
