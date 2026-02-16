@@ -132,14 +132,6 @@ export default function Home() {
               <a href="#features" style={{ fontSize: "0.875rem", color: "#9ca3af", textDecoration: "none" }}>
                 Features
               </a>
-              <a
-                href="https://github.com/roshannp/secureasy"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontSize: "0.875rem", color: "#9ca3af", textDecoration: "none" }}
-              >
-                GitHub
-              </a>
             </div>
           </nav>
 
