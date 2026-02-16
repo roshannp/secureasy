@@ -101,7 +101,14 @@ function detectTechnologies(headers: Headers): string[] {
   if (xAmz) tech.push("AWS CloudFront");
   if (ghPages) tech.push("GitHub Pages");
 
-  return [...new Set(tech)].filter(Boolean).slice(0, 8);
+  // Deduplicate case-insensitively (e.g. server: "cloudflare" + cf-ray → "Cloudflare")
+  const seen = new Map<string, string>();
+  for (const t of tech) {
+    if (t && !seen.has(t.toLowerCase())) {
+      seen.set(t.toLowerCase(), t);
+    }
+  }
+  return [...seen.values()].slice(0, 8);
 }
 
 async function getSubdomainsFromCrt(domain: string): Promise<string[]> {

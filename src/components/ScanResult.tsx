@@ -279,7 +279,7 @@ export function ScanResult({ data }: ScanResultProps) {
                     {sub.name}
                   </span>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexShrink: 0 }}>
-                    {[...new Set(sub.technologies)].map((t) => (
+                    {[...new Map((sub.technologies || []).map(t => [t.toLowerCase(), t])).values()].map((t) => (
                       <span
                         key={t}
                         style={{
