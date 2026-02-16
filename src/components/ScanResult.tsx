@@ -192,129 +192,135 @@ export function ScanResult({ data }: ScanResultProps) {
         </div>
       </div>
 
-      {/* === DNS Records + Subdomains side-by-side === */}
-      <div className="results-bottom-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
-        {/* DNS */}
-        <div style={cardStyle}>
-          <h2 style={sectionTitle}>DNS Records</h2>
-          <p style={sectionDesc}>{domain}</p>
-          <div style={{ marginTop: "0.75rem", fontFamily: "monospace", fontSize: "0.8125rem" }}>
-            {dns.a.length > 0 && (
-              <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
-                <span style={{ color: "#6b7280", minWidth: "50px" }}>A</span>
-                <span style={{ color: "#111827" }}>{dns.a.join(", ")}</span>
-              </div>
-            )}
-            {dns.aaaa.length > 0 && (
-              <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
-                <span style={{ color: "#6b7280", minWidth: "50px" }}>AAAA</span>
-                <span style={{ color: "#111827", wordBreak: "break-all" }}>{dns.aaaa.join(", ")}</span>
-              </div>
-            )}
-            {dns.mx.length > 0 && (
-              <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
-                <span style={{ color: "#6b7280", minWidth: "50px" }}>MX</span>
-                <span style={{ color: "#111827" }}>{dns.mx.join(", ")}</span>
-              </div>
-            )}
-            {dns.txt.length > 0 && (
-              <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
-                <span style={{ color: "#6b7280", minWidth: "50px" }}>TXT</span>
-                <span style={{ color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {dns.txt.slice(0, 2).join(" | ")}
-                  {dns.txt.length > 2 && ` (+${dns.txt.length - 2} more)`}
-                </span>
-              </div>
-            )}
-            {dns.cname.length > 0 && (
-              <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0" }}>
-                <span style={{ color: "#6b7280", minWidth: "50px" }}>CNAME</span>
-                <span style={{ color: "#111827" }}>{dns.cname.join(", ")}</span>
-              </div>
-            )}
-            {dns.a.length === 0 && dns.aaaa.length === 0 && dns.mx.length === 0 && dns.txt.length === 0 && dns.cname.length === 0 && (
-              <p style={{ color: "#9ca3af", fontFamily: "inherit", fontSize: "0.8125rem" }}>No DNS records found</p>
-            )}
-          </div>
-        </div>
-
-        {/* Discovered Subdomains */}
-        <div style={cardStyle}>
-          <h2 style={sectionTitle}>Discovered Subdomains ({subdomains.length})</h2>
-          <p style={sectionDesc}>From Certificate Transparency logs</p>
-          {subdomains.length === 0 ? (
-            <p style={{ color: "#9ca3af", fontSize: "0.8125rem", marginTop: "0.75rem" }}>
-              No subdomains discovered
-            </p>
-          ) : (
-            <ul style={{ marginTop: "0.75rem", listStyle: "none", padding: 0, maxHeight: "400px", overflowY: "auto" }}>
-              {subdomains.map((sub) => (
-                <li
-                  key={sub.name}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "0.5rem",
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: "8px",
-                    fontSize: "0.8125rem",
-                    fontFamily: "monospace",
-                    backgroundColor: "#f9fafb",
-                    marginBottom: "0.375rem",
-                    border: "1px solid #f3f4f6",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#111827",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      minWidth: 0,
-                      flex: 1,
-                    }}
-                    title={sub.name}
-                  >
-                    {sub.name}
-                  </span>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexShrink: 0 }}>
-                    {[...new Map((sub.technologies || []).map(t => [t.toLowerCase(), t])).values()].map((t) => (
-                      <span
-                        key={t}
-                        style={{
-                          padding: "0.125rem 0.5rem",
-                          borderRadius: "4px",
-                          backgroundColor: "#e5e7eb",
-                          color: "#374151",
-                          fontSize: "0.6875rem",
-                          fontFamily: "system-ui, sans-serif",
-                        }}
-                      >
-                        {t}
-                      </span>
-                    ))}
-                    {!sub.certValid && sub.hasCert && (
-                      <span style={{ padding: "0.125rem 0.375rem", borderRadius: "4px", backgroundColor: "#fef2f2", color: "#dc2626", fontSize: "0.6875rem", fontFamily: "system-ui, sans-serif", fontWeight: 500 }}>
-                        Expired
-                      </span>
-                    )}
-                    {(sub.name.startsWith("dev") || sub.name.startsWith("staging")) && (
-                      <span style={{ padding: "0.125rem 0.375rem", borderRadius: "4px", backgroundColor: "#fffbeb", color: "#d97706", fontSize: "0.6875rem", fontFamily: "system-ui, sans-serif", fontWeight: 500 }}>
-                        Dev
-                      </span>
-                    )}
-                    {sub.securityHeaders && (
-                      <span style={{ padding: "0.125rem 0.375rem", borderRadius: "4px", backgroundColor: "#f3f4f6", color: "#6b7280", fontSize: "0.6875rem", fontFamily: "system-ui, sans-serif" }}>
-                        {sub.securityHeaders.score}%
-                      </span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+      {/* === DNS Records === */}
+      <div style={cardStyle}>
+        <h2 style={sectionTitle}>DNS Records</h2>
+        <p style={sectionDesc}>{domain}</p>
+        <div style={{ marginTop: "0.75rem", fontFamily: "monospace", fontSize: "0.8125rem" }}>
+          {dns.a.length > 0 && (
+            <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
+              <span style={{ color: "#6b7280", minWidth: "50px" }}>A</span>
+              <span style={{ color: "#111827" }}>{dns.a.join(", ")}</span>
+            </div>
+          )}
+          {dns.aaaa.length > 0 && (
+            <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
+              <span style={{ color: "#6b7280", minWidth: "50px" }}>AAAA</span>
+              <span style={{ color: "#111827", wordBreak: "break-all" }}>{dns.aaaa.join(", ")}</span>
+            </div>
+          )}
+          {dns.mx.length > 0 && (
+            <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
+              <span style={{ color: "#6b7280", minWidth: "50px" }}>MX</span>
+              <span style={{ color: "#111827" }}>{dns.mx.join(", ")}</span>
+            </div>
+          )}
+          {dns.txt.length > 0 && (
+            <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0", borderBottom: "1px solid #f3f4f6" }}>
+              <span style={{ color: "#6b7280", minWidth: "50px" }}>TXT</span>
+              <span style={{ color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {dns.txt.slice(0, 2).join(" | ")}
+                {dns.txt.length > 2 && ` (+${dns.txt.length - 2} more)`}
+              </span>
+            </div>
+          )}
+          {dns.cname.length > 0 && (
+            <div style={{ display: "flex", gap: "0.5rem", padding: "0.375rem 0" }}>
+              <span style={{ color: "#6b7280", minWidth: "50px" }}>CNAME</span>
+              <span style={{ color: "#111827" }}>{dns.cname.join(", ")}</span>
+            </div>
+          )}
+          {dns.a.length === 0 && dns.aaaa.length === 0 && dns.mx.length === 0 && dns.txt.length === 0 && dns.cname.length === 0 && (
+            <p style={{ color: "#9ca3af", fontFamily: "inherit", fontSize: "0.8125rem" }}>No DNS records found</p>
           )}
         </div>
+      </div>
+
+      {/* === Discovered Subdomains (full width) === */}
+      <div style={cardStyle}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+          <div>
+            <h2 style={sectionTitle}>Discovered Subdomains ({subdomains.length})</h2>
+            <p style={sectionDesc}>From Certificate Transparency logs</p>
+          </div>
+          {subdomains.length > 0 && (
+            <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>
+              Showing all {subdomains.length} — scroll to browse
+            </span>
+          )}
+        </div>
+        {subdomains.length === 0 ? (
+          <p style={{ color: "#9ca3af", fontSize: "0.8125rem", marginTop: "0.75rem" }}>
+            No subdomains discovered
+          </p>
+        ) : (
+          <ul style={{ marginTop: "0.75rem", listStyle: "none", padding: 0, maxHeight: "600px", overflowY: "auto" }}>
+            {subdomains.map((sub) => (
+              <li
+                key={sub.name}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "0.5rem",
+                  padding: "0.5rem 0.75rem",
+                  borderRadius: "8px",
+                  fontSize: "0.8125rem",
+                  fontFamily: "monospace",
+                  backgroundColor: "#f9fafb",
+                  marginBottom: "0.375rem",
+                  border: "1px solid #f3f4f6",
+                }}
+              >
+                <span
+                  style={{
+                    color: "#111827",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                    flex: 1,
+                  }}
+                  title={sub.name}
+                >
+                  {sub.name}
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", flexShrink: 0 }}>
+                  {[...new Map((sub.technologies || []).map(t => [t.toLowerCase(), t])).values()].map((t) => (
+                    <span
+                      key={t}
+                      style={{
+                        padding: "0.125rem 0.5rem",
+                        borderRadius: "4px",
+                        backgroundColor: "#e5e7eb",
+                        color: "#374151",
+                        fontSize: "0.6875rem",
+                        fontFamily: "system-ui, sans-serif",
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                  {!sub.certValid && sub.hasCert && (
+                    <span style={{ padding: "0.125rem 0.375rem", borderRadius: "4px", backgroundColor: "#fef2f2", color: "#dc2626", fontSize: "0.6875rem", fontFamily: "system-ui, sans-serif", fontWeight: 500 }}>
+                      Expired
+                    </span>
+                  )}
+                  {(sub.name.startsWith("dev") || sub.name.startsWith("staging")) && (
+                    <span style={{ padding: "0.125rem 0.375rem", borderRadius: "4px", backgroundColor: "#fffbeb", color: "#d97706", fontSize: "0.6875rem", fontFamily: "system-ui, sans-serif", fontWeight: 500 }}>
+                      Dev
+                    </span>
+                  )}
+                  {sub.securityHeaders && (
+                    <span style={{ padding: "0.125rem 0.375rem", borderRadius: "4px", backgroundColor: "#f3f4f6", color: "#6b7280", fontSize: "0.6875rem", fontFamily: "system-ui, sans-serif" }}>
+                      {sub.securityHeaders.score}%
+                    </span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* === CVE Lookup === */}
