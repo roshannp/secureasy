@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AM I SECURE — External Attack Surface Scanner",
+  title: "AM I SECURE",
   description:
     "Free domain security assessment. Discover exposed subdomains, check SSL certificates, analyze security headers, and identify known CVEs — in seconds.",
   keywords: ["security scanner", "attack surface", "subdomain discovery", "SSL check", "security headers", "CVE scanner"],
